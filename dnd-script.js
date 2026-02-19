@@ -280,6 +280,7 @@ function renderInitiativeList() {
                     <div class="hp-text">${combatant.currentHp}/${combatant.maxHp} HP</div>
                 </div>
                 <div class="hp-controls">
+                    <span class="hp-label">Update Health:</span>
                     <button class="hp-btn hp-minus" data-id="${combatant.id}" aria-label="Take damage">-</button>
                     <input type="number" class="hp-input" data-id="${combatant.id}" value="1" min="1" max="${combatant.maxHp}" placeholder="Dmg">
                     <button class="hp-btn hp-plus" data-id="${combatant.id}" aria-label="Heal">+</button>

@@ -403,6 +403,14 @@ h2 {
     gap: 5px;
     margin-top: 6px;
     flex-wrap: wrap;
+    align-items: center;
+}
+
+.hp-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2c3e50;
+    white-space: nowrap;
 }
 
 .hp-btn {
