@@ -16,6 +16,7 @@ const combatInactive = document.getElementById('combat-inactive');
 const combatActive = document.getElementById('combat-active');
 const initiativeForm = document.getElementById('initiative-form');
 const combatantNameInput = document.getElementById('combatant-name');
+const combatantHpInput = document.getElementById('combatant-hp');
 const combatantWeaponInput = document.getElementById('combatant-weapon');
 const initiativeList = document.getElementById('initiative-list');
 const currentTurnDiv = document.getElementById('current-turn');
@@ -206,14 +207,17 @@ function endCombatSession() {
 }
 
 // Add combatant to combat
-function addCombatant(name, weapon) {
+function addCombatant(name, weapon, maxHp) {
     const initiativeRoll = rollDice(20);
+    const hp = parseInt(maxHp) || 0;
     
     const combatant = {
         id: Date.now(),
         name: name,
         weapon: weapon,
         initiative: initiativeRoll,
+        maxHp: hp,
+        currentHp: hp,
         status: 'active', // active, dead, out, missing_turn
         missingNextTurn: false
     };
@@ -226,6 +230,7 @@ function addCombatant(name, weapon) {
     
     // Reset form
     combatantNameInput.value = '';
+    combatantHpInput.value = '';
     combatantWeaponInput.value = '';
     combatantNameInput.focus();
 }
@@ -251,12 +256,28 @@ function renderInitiativeList() {
 
         const statusClass = `status-badge status-${combatant.status}`;
         const missingTurnBadge = combatant.missingNextTurn ? '<span class="status-badge status-missing">Missing Next</span>' : '';
+        const hpPercent = combatant.maxHp > 0 ? (combatant.currentHp / combatant.maxHp) * 100 : 0;
+        let hpColor = '#28a745'; // green
+        if (hpPercent <= 33) hpColor = '#dc3545'; // red
+        else if (hpPercent <= 66) hpColor = '#ffc107'; // yellow
 
         li.innerHTML = `
             <div class="initiative-position">${index + 1}</div>
             <div class="initiative-details">
                 <div class="initiative-name">${combatant.name}</div>
                 <div class="initiative-meta">Weapon: ${combatant.weapon || 'None'}</div>
+                <div class="hp-display">
+                    <div class="hp-bar-container">
+                        <div class="hp-bar" style="width: ${Math.max(0, hpPercent)}%; background-color: ${hpColor};"></div>
+                    </div>
+                    <div class="hp-text">${combatant.currentHp}/${combatant.maxHp} HP</div>
+                </div>
+                <div class="hp-controls">
+                    <button class="hp-btn hp-minus" data-id="${combatant.id}" aria-label="Take damage">-</button>
+                    <input type="number" class="hp-input" data-id="${combatant.id}" value="1" min="1" max="${combatant.maxHp}" placeholder="Dmg">
+                    <button class="hp-btn hp-plus" data-id="${combatant.id}" aria-label="Heal">+</button>
+                    <button class="hp-btn hp-reset" data-id="${combatant.id}" aria-label="Reset to max HP">Max</button>
+                </div>
                 <div class="status-indicators">
                     ${missingTurnBadge}
                     <span class="${statusClass}">${combatant.status === 'out' ? 'Out of Game' : combatant.status === 'dead' ? 'Dead' : 'Active'}</span>
@@ -270,6 +291,29 @@ function renderInitiativeList() {
                 <button class="initiative-remove" aria-label="Remove ${combatant.name} from combat">Remove</button>
             </div>
         `;
+
+        // HP control listeners
+        const minusBtn = li.querySelector('.hp-minus');
+        const plusBtn = li.querySelector('.hp-plus');
+        const resetBtn = li.querySelector('.hp-reset');
+        const hpInput = li.querySelector('.hp-input');
+
+        minusBtn.addEventListener('click', () => {
+            const dmg = parseInt(hpInput.value) || 1;
+            combatant.currentHp = Math.max(0, combatant.currentHp - dmg);
+            renderInitiativeList();
+        });
+
+        plusBtn.addEventListener('click', () => {
+            const heal = parseInt(hpInput.value) || 1;
+            combatant.currentHp = Math.min(combatant.maxHp, combatant.currentHp + heal);
+            renderInitiativeList();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            combatant.currentHp = combatant.maxHp;
+            renderInitiativeList();
+        });
 
         // Status button event listeners
         const statusBtns = li.querySelectorAll('.status-btn');
@@ -389,6 +433,7 @@ nextTurnBtn.addEventListener('click', nextTurn);
 initiativeForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = combatantNameInput.value.trim();
+    const hp = combatantHpInput.value.trim();
     const weapon = combatantWeaponInput.value.trim();
 
     if (!name) {
@@ -397,7 +442,13 @@ initiativeForm.addEventListener('submit', (e) => {
         return;
     }
 
-    addCombatant(name, weapon);
+    if (!hp) {
+        alert('Please enter max HP');
+        combatantHpInput.focus();
+        return;
+    }
+
+    addCombatant(name, weapon, hp);
 });
 
 // Set initial active dice button

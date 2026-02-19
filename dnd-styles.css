@@ -369,6 +369,75 @@ h2 {
 .initiative-meta {
     font-size: 0.85rem;
     opacity: 0.7;
+    margin-bottom: 8px;
+}
+
+/* HP Display and Controls */
+.hp-display {
+    margin: 10px 0 8px 0;
+}
+
+.hp-bar-container {
+    width: 100%;
+    height: 20px;
+    background: #e9ecef;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid #ced4da;
+    margin-bottom: 4px;
+}
+
+.hp-bar {
+    height: 100%;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.hp-text {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #495057;
+}
+
+.hp-controls {
+    display: flex;
+    gap: 5px;
+    margin-top: 6px;
+    flex-wrap: wrap;
+}
+
+.hp-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.hp-btn:hover {
+    background: #5a67d8;
+}
+
+.hp-btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 1px;
+}
+
+.hp-input {
+    width: 50px;
+    padding: 4px;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.hp-input:focus {
+    outline: none;
+    border-color: #667eea;
 }
 
 .initiative-roll {
@@ -898,6 +967,30 @@ h2 {
     .status-indicators {
         flex-wrap: wrap;
         gap: 5px;
+    }
+
+    .hp-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .hp-input {
+        width: 40px;
+        padding: 3px;
+        font-size: 0.75rem;
+    }
+
+    .hp-btn {
+        padding: 3px 6px;
+        font-size: 0.75rem;
+    }
+
+    .hp-bar-container {
+        height: 18px;
+    }
+
+    .hp-text {
+        font-size: 0.8rem;
     }
 
     .turn-character {
