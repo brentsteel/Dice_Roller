@@ -408,6 +408,99 @@ h2 {
     outline-offset: 2px;
 }
 
+/* Initiative action buttons */
+.initiative-actions {
+    display: flex;
+    gap: 5px;
+    margin-left: 10px;
+}
+
+.status-btn {
+    background: none;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.status-btn:hover {
+    transform: scale(1.1);
+}
+
+.status-btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Status indicators / badges */
+.status-indicators {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+.status-badge {
+    font-size: 0.7rem;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-dead {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-out {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-missing {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Initiative item status classes */
+.initiative-item.dead {
+    opacity: 0.6;
+}
+
+.initiative-item.dead .initiative-name {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+.initiative-item.out {
+    opacity: 0.5;
+}
+
+.initiative-item.out .initiative-name {
+    color: #6c757d;
+}
+
+.initiative-item.missing-turn {
+    border-left-color: #ffc107;
+}
+
+/* Combat active note */
+.combat-active-note {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #667eea;
+    margin-top: 15px;
+    font-style: italic;
+}
+
 /* Current turn display */
 .current-turn {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -783,6 +876,28 @@ h2 {
 
     .initiative-remove {
         align-self: flex-end;
+    }
+
+    .initiative-actions {
+        flex-wrap: wrap;
+        gap: 3px;
+        order: 4;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .status-btn {
+        padding: 5px 8px;
+        font-size: 1rem;
+    }
+
+    .initiative-details {
+        width: 100%;
+    }
+
+    .status-indicators {
+        flex-wrap: wrap;
+        gap: 5px;
     }
 
     .turn-character {

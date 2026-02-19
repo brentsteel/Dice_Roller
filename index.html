@@ -56,6 +56,7 @@
                     </div>
                     <button id="next-turn-btn" class="primary-btn" aria-label="Advance to next combatant's turn">Next Turn</button>
                 </div>
+                <p class="combat-active-note">💡 Character name will auto-populate in the Dice Roller when in active combat</p>
             </div>
         </section>
 
@@ -63,7 +64,8 @@
             <form id="roller-form" aria-label="Dice roller form">
                 <div class="form-group">
                     <label for="character-name">Character/Player Name:</label>
-                    <input type="text" id="character-name" placeholder="Enter character name" required aria-describedby="name-help">
+                    <input type="text" id="character-name" placeholder="Enter character name" aria-describedby="name-help">
+                    <span id="in-combat-note" style="display: none; font-size: 0.85rem; color: #667eea; font-weight: bold;">✓ Combat active - name auto-updated</span>
                     <span id="name-help" class="sr-only">Enter the name of your character or player</span>
                 </div>
 

@@ -213,7 +213,9 @@ function addCombatant(name, weapon) {
         id: Date.now(),
         name: name,
         weapon: weapon,
-        initiative: initiativeRoll
+        initiative: initiativeRoll,
+        status: 'active', // active, dead, out, missing_turn
+        missingNextTurn: false
     };
 
     combatants.push(combatant);
@@ -235,20 +237,53 @@ function renderInitiativeList() {
     combatants.forEach((combatant, index) => {
         const li = document.createElement('li');
         li.className = 'initiative-item';
-        if (index === currentTurnIndex) {
+        if (index === currentTurnIndex && combatant.status === 'active') {
             li.classList.add('active');
         }
+        if (combatant.status === 'dead') {
+            li.classList.add('dead');
+        } else if (combatant.status === 'out') {
+            li.classList.add('out');
+        } else if (combatant.missingNextTurn) {
+            li.classList.add('missing-turn');
+        }
         li.dataset.combatantId = combatant.id;
+
+        const statusClass = `status-badge status-${combatant.status}`;
+        const missingTurnBadge = combatant.missingNextTurn ? '<span class="status-badge status-missing">Missing Next</span>' : '';
 
         li.innerHTML = `
             <div class="initiative-position">${index + 1}</div>
             <div class="initiative-details">
                 <div class="initiative-name">${combatant.name}</div>
                 <div class="initiative-meta">Weapon: ${combatant.weapon || 'None'}</div>
+                <div class="status-indicators">
+                    ${missingTurnBadge}
+                    <span class="${statusClass}">${combatant.status === 'out' ? 'Out of Game' : combatant.status === 'dead' ? 'Dead' : 'Active'}</span>
+                </div>
             </div>
             <div class="initiative-roll">${combatant.initiative}</div>
-            <button class="initiative-remove" aria-label="Remove ${combatant.name} from combat">Remove</button>
+            <div class="initiative-actions">
+                <button class="status-btn btn-dead" data-status="dead" aria-label="Mark ${combatant.name} as dead" title="Dead">💀</button>
+                <button class="status-btn btn-out" data-status="out" aria-label="Mark ${combatant.name} out of game" title="Out of Game">❌</button>
+                <button class="status-btn btn-missing" data-status="missing" aria-label="Mark ${combatant.name} missing next turn" title="Missing Next Turn">⏭️</button>
+                <button class="initiative-remove" aria-label="Remove ${combatant.name} from combat">Remove</button>
+            </div>
         `;
+
+        // Status button event listeners
+        const statusBtns = li.querySelectorAll('.status-btn');
+        statusBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const newStatus = btn.dataset.status;
+                if (newStatus === 'missing') {
+                    combatant.missingNextTurn = !combatant.missingNextTurn;
+                } else {
+                    combatant.status = combatant.status === newStatus ? 'active' : newStatus;
+                }
+                renderInitiativeList();
+            });
+        });
 
         const removeBtn = li.querySelector('.initiative-remove');
         removeBtn.addEventListener('click', () => {
@@ -271,24 +306,71 @@ function removeCombatant(id) {
     updateCurrentTurn();
 }
 
-// Update current turn display
+// Update current turn display and auto-populate dice roller
 function updateCurrentTurn() {
     if (combatants.length === 0) {
         currentTurnDiv.hidden = true;
+        characterNameInput.value = '';
+        document.getElementById('in-combat-note').style.display = 'none';
         return;
     }
 
+    // Find next active combatant (skip dead/out of game)
+    let activeIndex = currentTurnIndex;
+    let attempts = 0;
+    while (attempts < combatants.length) {
+        const current = combatants[activeIndex];
+        if (current.status === 'active') {
+            // Handle missing turn
+            if (current.missingNextTurn) {
+                current.missingNextTurn = false;
+                activeIndex = (activeIndex + 1) % combatants.length;
+                attempts++;
+                continue;
+            }
+            break;
+        }
+        activeIndex = (activeIndex + 1) % combatants.length;
+        attempts++;
+    }
+
+    currentTurnIndex = activeIndex;
     const current = combatants[currentTurnIndex];
+    
     document.getElementById('turn-character').textContent = current.name;
     document.getElementById('turn-weapon').textContent = `Weapon: ${current.weapon || 'None'}`;
     currentTurnDiv.hidden = false;
+    
+    // Auto-populate character name in dice roller
+    characterNameInput.value = current.name;
+    document.getElementById('in-combat-note').style.display = 'inline';
 }
 
 // Move to next turn
 function nextTurn() {
     if (combatants.length === 0) return;
 
-    currentTurnIndex = (currentTurnIndex + 1) % combatants.length;
+    let nextIndex = (currentTurnIndex + 1) % combatants.length;
+    let attempts = 0;
+    
+    // Skip to next active combatant
+    while (attempts < combatants.length) {
+        const combatant = combatants[nextIndex];
+        if (combatant.status === 'active') {
+            // Handle missing turn - skip this turn
+            if (combatant.missingNextTurn) {
+                combatant.missingNextTurn = false;
+                nextIndex = (nextIndex + 1) % combatants.length;
+                attempts++;
+                continue;
+            }
+            break;
+        }
+        nextIndex = (nextIndex + 1) % combatants.length;
+        attempts++;
+    }
+
+    currentTurnIndex = nextIndex;
     renderInitiativeList();
     updateCurrentTurn();
 
