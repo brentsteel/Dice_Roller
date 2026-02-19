@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D Dice Roller</title>
+    <link rel="stylesheet" href="dnd-styles.css">
+</head>
+<body>
+    <header>
+        <h1>🎲 Dungeons & Dragons Dice Roller</h1>
+        <p class="subtitle">Roll for your adventure</p>
+    </header>
+    <main>
+        <section class="combat-tracker-section">
+            <div class="combat-header">
+                <h2>⚔️ Combat Tracker</h2>
+                <div class="combat-buttons">
+                    <button id="start-combat-btn" class="primary-btn" aria-label="Start a new combat session">Start Combat</button>
+                    <button id="end-combat-btn" class="secondary-btn" aria-label="End combat session" disabled>End Combat</button>
+                </div>
+            </div>
+
+            <div id="combat-inactive" class="combat-content">
+                <p class="empty-message">No active combat. Click "Start Combat" to begin a new session.</p>
+            </div>
+
+            <div id="combat-active" class="combat-content" hidden>
+                <form id="initiative-form" aria-label="Add combatant to initiative">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="combatant-name">Combatant Name:</label>
+                            <input type="text" id="combatant-name" placeholder="Character name" aria-describedby="combatant-help">
+                            <span id="combatant-help" class="sr-only">Enter the name of the character in combat</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="combatant-weapon">Weapon:</label>
+                            <input type="text" id="combatant-weapon" placeholder="e.g., Longsword, Fireball">
+                        </div>
+                        <button type="submit" class="primary-btn" aria-label="Roll initiative and add combatant">Roll Initiative</button>
+                    </div>
+                </form>
+
+                <div class="initiative-tracker">
+                    <h3>Initiative Order</h3>
+                    <ol id="initiative-list" aria-label="Combat participants in initiative order">
+                        <!-- Initiative order will be added here -->
+                    </ol>
+                </div>
+
+                <div class="current-turn" id="current-turn" hidden>
+                    <p class="turn-label">Current Turn:</p>
+                    <div class="turn-display">
+                        <span id="turn-character" class="turn-character"></span>
+                        <span id="turn-weapon" class="turn-weapon"></span>
+                    </div>
+                    <button id="next-turn-btn" class="primary-btn" aria-label="Advance to next combatant's turn">Next Turn</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="roller-section">
+            <form id="roller-form" aria-label="Dice roller form">
+                <div class="form-group">
+                    <label for="character-name">Character/Player Name:</label>
+                    <input type="text" id="character-name" placeholder="Enter character name" required aria-describedby="name-help">
+                    <span id="name-help" class="sr-only">Enter the name of your character or player</span>
+                </div>
+
+                <fieldset>
+                    <legend>Select Dice Type:</legend>
+                    <div class="dice-buttons">
+                        <button type="button" class="dice-btn" data-dice="d4" aria-label="Roll a 4-sided die">d4</button>
+                        <button type="button" class="dice-btn" data-dice="d6" aria-label="Roll a 6-sided die">d6</button>
+                        <button type="button" class="dice-btn" data-dice="d8" aria-label="Roll an 8-sided die">d8</button>
+                        <button type="button" class="dice-btn" data-dice="d10" aria-label="Roll a 10-sided die">d10</button>
+                        <button type="button" class="dice-btn" data-dice="d12" aria-label="Roll a 12-sided die">d12</button>
+                        <button type="button" class="dice-btn" data-dice="d20" aria-label="Roll a 20-sided die">d20</button>
+                        <button type="button" class="dice-btn" data-dice="d100" aria-label="Roll a 100-sided die (percentile)">d100</button>
+                    </div>
+                    <input type="hidden" id="selected-dice" value="d20">
+                    <span id="dice-help" class="sr-only">Select the type of die to roll</span>
+                </fieldset>
+            </form>
+
+            <div class="roll-result" id="roll-result" aria-live="polite" aria-atomic="true">
+                <p class="result-text">Ready to roll!</p>
+            </div>
+        </section>
+
+        <section class="history-section">
+            <div class="history-header">
+                <h2>Roll History</h2>
+                <button id="clear-history-btn" class="secondary-btn" aria-label="Clear all roll history">Clear History</button>
+            </div>
+            <div class="roll-history-container">
+                <ul id="roll-history" aria-label="List of previous rolls">
+                    <!-- Roll history will be added here -->
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="dnd-script.js"></script>
+</body>
+</html>
