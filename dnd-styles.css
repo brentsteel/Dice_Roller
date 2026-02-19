@@ -12,6 +12,7 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     min-height: 100vh;
     padding: 20px;
+    overflow-x: hidden;
 }
 
 header {
@@ -25,6 +26,12 @@ h1 {
     font-size: 2.8rem;
     margin-bottom: 10px;
     letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
 }
 
 .subtitle {
@@ -52,6 +59,18 @@ main {
     padding: 30px;
 }
 
+@media (max-width: 768px) {
+    .combat-tracker-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .combat-tracker-section {
+        padding: 15px;
+    }
+}
+
 .roller-section,
 .history-section {
     background: white;
@@ -69,6 +88,20 @@ main {
 
 .history-section {
     padding: 30px;
+}
+
+@media (max-width: 768px) {
+    .roller-section,
+    .history-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .roller-section,
+    .history-section {
+        padding: 15px;
+    }
 }
 
 /* Form styles */
@@ -288,11 +321,35 @@ h2 {
 
 .form-row .form-group {
     flex: 1;
-    min-width: 150px;
+    min-width: 120px;
 }
 
-.form-row .primary-btn {
-    flex-shrink: 0;
+@media (max-width: 768px) {
+    .form-row {
+        gap: 10px;
+    }
+
+    .form-row .form-group {
+        flex: 1;
+        min-width: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .form-row .form-group {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .form-row .primary-btn {
+        width: 100%;
+    }
 }
 
 /* Initiative tracker */
@@ -312,14 +369,30 @@ h2 {
 
 .initiative-item {
     display: flex;
-    align-items: center;
+    gap: 15px;
     padding: 15px;
-    background: #f8f9fa;
-    border-left: 5px solid #667eea;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    align-items: flex-start;
     transition: all 0.3s;
-    animation: slideIn 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+    .initiative-item {
+        gap: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .initiative-item {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+    }
 }
 
 .initiative-item:hover {
@@ -455,6 +528,13 @@ h2 {
     flex-wrap: wrap;
 }
 
+@media (max-width: 480px) {
+    .initiative-display {
+        width: 100%;
+        margin-top: 8px;
+    }
+}
+
 .init-breakdown {
     display: flex;
     align-items: center;
@@ -464,6 +544,15 @@ h2 {
     border-radius: 4px;
     font-size: 0.95rem;
     flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .init-breakdown {
+        width: 100%;
+        font-size: 0.8rem;
+        padding: 6px 8px;
+        gap: 4px;
+    }
 }
 
 .init-label {
@@ -566,9 +655,24 @@ h2 {
     align-items: center;
 }
 
+@media (max-width: 480px) {
+    .conditions-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
 .advantage-display {
     display: flex;
     gap: 4px;
+}
+
+@media (max-width: 480px) {
+    .advantage-display {
+        width: 100%;
+        gap: 6px;
+    }
 }
 
 .advantage-btn {
@@ -581,6 +685,14 @@ h2 {
     font-weight: bold;
     font-size: 0.75rem;
     transition: all 0.2s;
+}
+
+@media (max-width: 480px) {
+    .advantage-btn {
+        flex: 1;
+        font-size: 0.7rem;
+        padding: 6px 8px;
+    }
 }
 
 .advantage-btn:hover {
@@ -598,6 +710,12 @@ h2 {
     display: flex;
     gap: 5px;
     flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .conditions-list {
+        width: 100%;
+    }
 }
 
 .condition-badge {
@@ -653,6 +771,16 @@ h2 {
 
 .condition-controls {
     display: flex;
+}
+
+@media (max-width: 480px) {
+    .condition-controls {
+        width: 100%;
+    }
+
+    .condition-select {
+        width: 100%;
+    }
 }
 
 .condition-select {
@@ -735,6 +863,15 @@ h2 {
     display: flex;
     gap: 5px;
     margin-left: 10px;
+}
+
+@media (max-width: 480px) {
+    .initiative-actions {
+        width: 100%;
+        margin-left: 0;
+        gap: 3px;
+        justify-content: space-between;
+    }
 }
 
 .status-btn {
