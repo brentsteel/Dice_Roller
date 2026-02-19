@@ -224,7 +224,9 @@ function addCombatant(name, weapon, maxHp, initMod) {
         maxHp: hp,
         currentHp: hp,
         status: 'active', // active, dead, out, missing_turn
-        missingNextTurn: false
+        missingNextTurn: false,
+        advantageDisadvantage: 'none', // none, advantage, disadvantage
+        conditions: [] // prone, stunned, poisoned, charmed, blinded, restrained
     };
 
     combatants.push(combatant);
@@ -285,6 +287,28 @@ function renderInitiativeList() {
                     <input type="number" class="hp-input" data-id="${combatant.id}" value="1" min="1" max="${combatant.maxHp}" placeholder="Dmg">
                     <button class="hp-btn hp-plus" data-id="${combatant.id}" aria-label="Heal">+</button>
                     <button class="hp-btn hp-reset" data-id="${combatant.id}" aria-label="Reset to max HP">Max</button>
+                </div>
+                <div class="conditions-display">
+                    <div class="conditions-section">
+                        <div class="advantage-display" id="advantage-${combatant.id}" data-id="${combatant.id}">
+                            <button class="advantage-btn" data-type="advantage" aria-label="Toggle advantage for ${combatant.name}" title="Advantage: Roll twice, take higher">⬆️ ADV</button>
+                            <button class="advantage-btn" data-type="disadvantage" aria-label="Toggle disadvantage for ${combatant.name}" title="Disadvantage: Roll twice, take lower">⬇️ DIS</button>
+                        </div>
+                        <div class="conditions-list" id="conditions-${combatant.id}">
+                            ${combatant.conditions.map(cond => `<span class="condition-badge condition-${cond}" title="${getConditionDescription(cond)}">${formatConditionName(cond)}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="condition-controls">
+                        <select class="condition-select" data-id="${combatant.id}" aria-label="Add condition to ${combatant.name}">
+                            <option value="">+ Condition</option>
+                            <option value="prone">Prone</option>
+                            <option value="stunned">Stunned</option>
+                            <option value="poisoned">Poisoned</option>
+                            <option value="charmed">Charmed</option>
+                            <option value="blinded">Blinded</option>
+                            <option value="restrained">Restrained</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="status-indicators">
                     ${missingTurnBadge}
@@ -362,6 +386,46 @@ function renderInitiativeList() {
             });
         });
 
+        // Advantage/Disadvantage buttons
+        const advantageDisplay = li.querySelector(`[id="advantage-${combatant.id}"]`);
+        const advantageBtns = advantageDisplay.querySelectorAll('.advantage-btn');
+        advantageBtns.forEach(btn => {
+            const type = btn.dataset.type;
+            if (combatant.advantageDisadvantage === type) {
+                btn.classList.add('active');
+            }
+            btn.addEventListener('click', () => {
+                combatant.advantageDisadvantage = combatant.advantageDisadvantage === type ? 'none' : type;
+                renderInitiativeList();
+            });
+        });
+
+        // Condition dropdown
+        const conditionSelect = li.querySelector('.condition-select');
+        conditionSelect.addEventListener('change', (e) => {
+            const condition = e.target.value;
+            if (condition) {
+                if (!combatant.conditions.includes(condition)) {
+                    combatant.conditions.push(condition);
+                }
+                renderInitiativeList();
+            }
+        });
+
+        // Remove condition by clicking the badge
+        const conditionBadges = li.querySelectorAll('.condition-badge');
+        conditionBadges.forEach(badge => {
+            badge.addEventListener('click', () => {
+                const condition = badge.textContent.toLowerCase().replace(' ', '');
+                const condArray = ['prone', 'stunned', 'poisoned', 'charmed', 'blinded', 'restrained'];
+                const found = condArray.find(c => formatConditionName(c) === badge.textContent);
+                if (found) {
+                    combatant.conditions = combatant.conditions.filter(c => c !== found);
+                    renderInitiativeList();
+                }
+            });
+        });
+
         const removeBtn = li.querySelector('.initiative-remove');
         removeBtn.addEventListener('click', () => {
             removeCombatant(combatant.id);
@@ -384,6 +448,23 @@ function removeCombatant(id) {
 }
 
 // Update current turn display and auto-populate dice roller
+// Helper functions for conditions
+function formatConditionName(condition) {
+    return condition.charAt(0).toUpperCase() + condition.slice(1);
+}
+
+function getConditionDescription(condition) {
+    const descriptions = {
+        prone: 'Prone - disadvantage on attacks',
+        stunned: 'Stunned - can\'t act',
+        poisoned: 'Poisoned - disadvantage on attacks/checks',
+        charmed: 'Charmed - can\'t attack charmer',
+        blinded: 'Blinded - disadvantage on attacks',
+        restrained: 'Restrained - reduced speed'
+    };
+    return descriptions[condition] || '';
+}
+
 function updateCurrentTurn() {
     if (combatants.length === 0) {
         currentTurnDiv.hidden = true;

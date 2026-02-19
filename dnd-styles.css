@@ -550,6 +550,150 @@ h2 {
     background: rgba(255, 255, 255, 0.3);
 }
 
+/* Advantage/Disadvantage and Conditions System */
+.conditions-display {
+    margin-top: 8px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.conditions-section {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+.advantage-display {
+    display: flex;
+    gap: 4px;
+}
+
+.advantage-btn {
+    background: #e8f4f8;
+    color: #2c3e50;
+    border: 2px solid #667eea;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+}
+
+.advantage-btn:hover {
+    background: #667eea;
+    color: white;
+}
+
+.advantage-btn.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+}
+
+.conditions-list {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.condition-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.condition-badge:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+.condition-prone {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.condition-stunned {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #dc3545;
+}
+
+.condition-poisoned {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #28a745;
+}
+
+.condition-charmed {
+    background: #e2d5f6;
+    color: #5a1f8f;
+    border: 1px solid #9c27b0;
+}
+
+.condition-blinded {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #17a2b8;
+}
+
+.condition-restrained {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.condition-controls {
+    display: flex;
+}
+
+.condition-select {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    background: white;
+}
+
+.condition-select:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 1px;
+}
+
+.initiative-item.active .conditions-display {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.initiative-item.active .advantage-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.initiative-item.active .advantage-btn.active {
+    background: rgba(255, 255, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+.initiative-item.active .condition-select {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.initiative-item.active .condition-select option {
+    color: #2c3e50;
+}
+
 /* Mobile responsive for initiative display */
 @media (max-width: 768px) {
     .init-breakdown {
