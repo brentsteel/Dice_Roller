@@ -17,6 +17,7 @@ const combatActive = document.getElementById('combat-active');
 const initiativeForm = document.getElementById('initiative-form');
 const combatantNameInput = document.getElementById('combatant-name');
 const combatantHpInput = document.getElementById('combatant-hp');
+const combatantInitModInput = document.getElementById('combatant-init-mod');
 const combatantWeaponInput = document.getElementById('combatant-weapon');
 const initiativeList = document.getElementById('initiative-list');
 const currentTurnDiv = document.getElementById('current-turn');
@@ -207,15 +208,19 @@ function endCombatSession() {
 }
 
 // Add combatant to combat
-function addCombatant(name, weapon, maxHp) {
-    const initiativeRoll = rollDice(20);
+function addCombatant(name, weapon, maxHp, initMod) {
+    const roll = rollDice(20);
+    const modifier = parseInt(initMod) || 0;
+    const totalInitiative = roll + modifier;
     const hp = parseInt(maxHp) || 0;
     
     const combatant = {
         id: Date.now(),
         name: name,
         weapon: weapon,
-        initiative: initiativeRoll,
+        initiativeRoll: roll,
+        initiativeModifier: modifier,
+        totalInitiative: totalInitiative,
         maxHp: hp,
         currentHp: hp,
         status: 'active', // active, dead, out, missing_turn
@@ -223,7 +228,8 @@ function addCombatant(name, weapon, maxHp) {
     };
 
     combatants.push(combatant);
-    combatants.sort((a, b) => b.initiative - a.initiative);
+    // Sort by total initiative (highest first)
+    combatants.sort((a, b) => b.totalInitiative - a.totalInitiative);
 
     renderInitiativeList();
     updateCurrentTurn();
@@ -231,6 +237,7 @@ function addCombatant(name, weapon, maxHp) {
     // Reset form
     combatantNameInput.value = '';
     combatantHpInput.value = '';
+    combatantInitModInput.value = '0';
     combatantWeaponInput.value = '';
     combatantNameInput.focus();
 }
@@ -283,7 +290,16 @@ function renderInitiativeList() {
                     <span class="${statusClass}">${combatant.status === 'out' ? 'Out of Game' : combatant.status === 'dead' ? 'Dead' : 'Active'}</span>
                 </div>
             </div>
-            <div class="initiative-roll">${combatant.initiative}</div>
+            <div class="initiative-display">
+                <div class="init-breakdown">
+                    <span class="init-label">Initiative:</span>
+                    <span class="init-roll">${combatant.initiativeRoll}</span>
+                    <span class="init-modifier">${combatant.initiativeModifier >= 0 ? '+' : ''}${combatant.initiativeModifier}</span>
+                    <span class="init-total">=</span>
+                    <span class="init-total-value">${combatant.totalInitiative}</span>
+                </div>
+                <button class="edit-mod-btn" data-id="${combatant.id}" aria-label="Edit initiative modifier for ${combatant.name}">✏️</button>
+            </div>
             <div class="initiative-actions">
                 <button class="status-btn btn-dead" data-status="dead" aria-label="Mark ${combatant.name} as dead" title="Dead">💀</button>
                 <button class="status-btn btn-out" data-status="out" aria-label="Mark ${combatant.name} out of game" title="Out of Game">❌</button>
@@ -313,6 +329,22 @@ function renderInitiativeList() {
         resetBtn.addEventListener('click', () => {
             combatant.currentHp = combatant.maxHp;
             renderInitiativeList();
+        });
+
+        // Edit initiative modifier button
+        const editModBtn = li.querySelector('.edit-mod-btn');
+        editModBtn.addEventListener('click', () => {
+            const newMod = prompt(`Enter new initiative modifier for ${combatant.name}:`, combatant.initiativeModifier);
+            if (newMod !== null && newMod !== '') {
+                const modValue = parseInt(newMod);
+                if (!isNaN(modValue)) {
+                    combatant.initiativeModifier = modValue;
+                    combatant.totalInitiative = combatant.initiativeRoll + combatant.initiativeModifier;
+                    combatants.sort((a, b) => b.totalInitiative - a.totalInitiative);
+                    renderInitiativeList();
+                    updateCurrentTurn();
+                }
+            }
         });
 
         // Status button event listeners
@@ -434,6 +466,7 @@ initiativeForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = combatantNameInput.value.trim();
     const hp = combatantHpInput.value.trim();
+    const initMod = combatantInitModInput.value.trim();
     const weapon = combatantWeaponInput.value.trim();
 
     if (!name) {
@@ -448,7 +481,7 @@ initiativeForm.addEventListener('submit', (e) => {
         return;
     }
 
-    addCombatant(name, weapon, hp);
+    addCombatant(name, weapon, hp, initMod);
 });
 
 // Set initial active dice button
